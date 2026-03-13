@@ -9,6 +9,23 @@ A simple educational Flutter starter app committed into this repository.
 - `test/widget_test.dart` with a starter widget test.
 - Platform folders (`android`, `ios`, `web`, `linux`, `macos`, `windows`) with placeholder README files.
 
+## Πώς το τρέχω τώρα; (γρήγορα)
+
+Από το root του project:
+
+```bash
+flutter pub get
+flutter create .
+flutter run -d chrome
+```
+
+Αν θες να το ανοίξεις σε άλλη συσκευή:
+
+```bash
+flutter devices
+flutter run -d <device_id>
+```
+
 ## How to run it (quick start)
 
 From the project root:
@@ -35,7 +52,15 @@ flutter --version
 
 ### Linux (Ubuntu/Debian) — if `snap: command not found`
 
-Use the official Flutter SDK archive instead:
+Use the helper script from this repo (installs pinned Flutter `3.24.5`):
+
+```bash
+./scripts/install_flutter_linux.sh
+source ~/.bashrc
+flutter --version
+```
+
+Manual alternative (official SDK archive):
 
 ```bash
 cd "$HOME"
