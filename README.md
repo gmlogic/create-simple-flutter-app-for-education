@@ -9,16 +9,48 @@ A simple educational Flutter starter app committed into this repository.
 - `test/widget_test.dart` with a starter widget test.
 - Platform folders (`android`, `ios`, `web`, `linux`, `macos`, `windows`) with placeholder README files.
 
+## How to run it (quick start)
+
+From the project root:
+
+```bash
+flutter --version
+flutter pub get
+flutter create .
+flutter run -d chrome
+```
+
+- `flutter create .` creates the missing platform scaffolding files.
+- `flutter run -d chrome` starts the app in your browser.
+- If you have only one device available, `flutter run` is enough.
+
 ## Install Flutter
 
-### Ubuntu / Debian (quick way)
+### Linux (Ubuntu/Debian) — if `snap` exists
 
 ```bash
 sudo snap install flutter --classic
 flutter --version
 ```
 
-If `snap` is not available, use the official archive method from Flutter docs.
+### Linux (Ubuntu/Debian) — if `snap: command not found`
+
+Use the official Flutter SDK archive instead:
+
+```bash
+cd "$HOME"
+curl -LO https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.5-stable.tar.xz
+tar xf flutter_linux_3.24.5-stable.tar.xz
+export PATH="$HOME/flutter/bin:$PATH"
+flutter --version
+```
+
+To make PATH permanent:
+
+```bash
+echo 'export PATH="$HOME/flutter/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
 
 ### macOS
 
@@ -46,10 +78,28 @@ After Flutter is installed:
 flutter doctor
 flutter pub get
 flutter create .
-flutter run
 ```
 
-> `flutter create .` generates the full native scaffolding for Android/iOS/web/desktop.
+## Run app
+
+```bash
+flutter run -d chrome
+```
+
+Other common targets:
+
+```bash
+flutter run -d android
+flutter run -d windows
+flutter run -d linux
+flutter run -d macos
+```
+
+To see available devices:
+
+```bash
+flutter devices
+```
 
 ## Run tests
 
@@ -73,4 +123,3 @@ docker run --rm -it -v "$PWD":/app -w /app flutter-edu-test bash
 flutter pub get
 flutter test
 ```
-
