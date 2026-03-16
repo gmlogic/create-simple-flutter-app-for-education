@@ -14,7 +14,7 @@ class EducationApp extends StatelessWidget {
     return MaterialApp(
       title: 'Math Learning App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
         useMaterial3: true,
       ),
       home: const LearningHomePage(),
@@ -31,10 +31,11 @@ class LearningHomePage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Math Practice for Kids'),
+          backgroundColor: const Color(0xFFFFCC4D),
+          title: const Text('🎈 Math Playground'),
           bottom: const TabBar(
             tabs: <Tab>[
-              Tab(text: 'Πολλαπλασιασμός'),
+              Tab(text: 'Προπαίδεια'),
               Tab(text: 'Ηλικία 4+'),
             ],
           ),
@@ -118,24 +119,38 @@ class _MultiplicationPracticeTabState extends State<MultiplicationPracticeTab> {
   late QuestionDeck _deck;
 
   DifficultyLevel _difficulty = DifficultyLevel.easy;
+  bool _tenTimesMode = true;
   int _score = 0;
-  String _feedback = 'Διάλεξε επίπεδο και λύσε την πράξη.';
+  String _feedback = 'Ξεκινάμε με προπαίδεια του 10! 🌟';
   bool _alreadyScoredCurrentQuestion = false;
 
   @override
   void initState() {
     super.initState();
-    _deck = QuestionDeck(questions: _createQuestions(_difficulty));
+    _deck = QuestionDeck(questions: _createQuestions());
   }
 
-  List<IntPair> _createQuestions(DifficultyLevel level) {
+  List<IntPair> _createQuestions() {
+    if (_tenTimesMode) {
+      return List<IntPair>.generate(10, (int index) => (10, index + 1));
+    }
+
     final List<IntPair> pairs = <IntPair>[];
-    for (int left = level.min; left <= level.max; left++) {
-      for (int right = level.min; right <= level.max; right++) {
+    for (int left = _difficulty.min; left <= _difficulty.max; left++) {
+      for (int right = _difficulty.min; right <= _difficulty.max; right++) {
         pairs.add((left, right));
       }
     }
     return pairs;
+  }
+
+  void _rebuildDeckWithMessage(String message) {
+    setState(() {
+      _deck.replaceQuestions(_createQuestions());
+      _answerController.clear();
+      _alreadyScoredCurrentQuestion = false;
+      _feedback = message;
+    });
   }
 
   void _checkAnswer() {
@@ -145,7 +160,7 @@ class _MultiplicationPracticeTabState extends State<MultiplicationPracticeTab> {
 
     if (userAnswer == correct) {
       setState(() {
-        _feedback = 'Σωστά! ${current.$1} × ${current.$2} = $correct';
+        _feedback = 'Μπράβο! ${current.$1} × ${current.$2} = $correct 🎉';
         if (!_alreadyScoredCurrentQuestion) {
           _score++;
           _alreadyScoredCurrentQuestion = true;
@@ -155,7 +170,7 @@ class _MultiplicationPracticeTabState extends State<MultiplicationPracticeTab> {
     }
 
     setState(() {
-      _feedback = 'Λάθος. Δοκίμασε ξανά.';
+      _feedback = 'Σχεδόν! Προσπάθησε ξανά 💪';
     });
   }
 
@@ -164,18 +179,24 @@ class _MultiplicationPracticeTabState extends State<MultiplicationPracticeTab> {
       _deck.next();
       _answerController.clear();
       _alreadyScoredCurrentQuestion = false;
-      _feedback = 'Επόμενη πράξη!';
+      _feedback = 'Πάμε άλλη μία! 🚀';
     });
   }
 
   void _changeDifficulty(DifficultyLevel level) {
     setState(() {
       _difficulty = level;
-      _deck.replaceQuestions(_createQuestions(level));
-      _answerController.clear();
-      _alreadyScoredCurrentQuestion = false;
-      _feedback = 'Άλλαξες επίπεδο: ${level.label}';
     });
+    _rebuildDeckWithMessage('Επίπεδο: ${level.label}');
+  }
+
+  void _setTenTimesMode(bool value) {
+    setState(() {
+      _tenTimesMode = value;
+    });
+    _rebuildDeckWithMessage(
+      value ? 'Μόνο προπαίδεια του 10! 🔟' : 'Όλες οι προπαίδειες ενεργές!',
+    );
   }
 
   @override
@@ -188,74 +209,94 @@ class _MultiplicationPracticeTabState extends State<MultiplicationPracticeTab> {
   Widget build(BuildContext context) {
     final IntPair current = _deck.current();
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              const Text('Επίπεδο:'),
-              const SizedBox(width: 12),
-              DropdownButton<DifficultyLevel>(
-                key: const Key('difficulty_dropdown'),
-                value: _difficulty,
-                onChanged: (DifficultyLevel? value) {
-                  if (value != null) {
-                    _changeDifficulty(value);
-                  }
-                },
-                items: DifficultyLevel.values
-                    .map(
-                      (DifficultyLevel level) => DropdownMenuItem<DifficultyLevel>(
-                        value: level,
-                        child: Text(level.label),
-                      ),
-                    )
-                    .toList(),
+    return Container(
+      color: const Color(0xFFFFF8E1),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Card(
+              color: const Color(0xFFFFE082),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: <Widget>[
+                    const Text('🔢 Επίπεδο:'),
+                    const SizedBox(width: 10),
+                    DropdownButton<DifficultyLevel>(
+                      key: const Key('difficulty_dropdown'),
+                      value: _difficulty,
+                      onChanged: (DifficultyLevel? value) {
+                        if (value != null) {
+                          _changeDifficulty(value);
+                        }
+                      },
+                      items: DifficultyLevel.values
+                          .map(
+                            (DifficultyLevel level) => DropdownMenuItem<DifficultyLevel>(
+                              value: level,
+                              child: Text(level.label),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const Spacer(),
+                    Text('🏆 $_score', key: const Key('score_text')),
+                  ],
+                ),
               ),
-              const Spacer(),
-              Text('Πόντοι: $_score', key: const Key('score_text')),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(
-            '${current.$1} × ${current.$2} = ?',
-            key: const Key('multiplication_question_text'),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.displaySmall,
-          ),
-          const SizedBox(height: 18),
-          TextField(
-            key: const Key('multiplication_answer_field'),
-            controller: _answerController,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Απάντηση',
             ),
-          ),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            key: const Key('multiplication_check_button'),
-            onPressed: _checkAnswer,
-            child: const Text('Έλεγχος'),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton(
-            key: const Key('multiplication_next_button'),
-            onPressed: _nextQuestion,
-            child: const Text('Επόμενη πράξη'),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            _feedback,
-            key: const Key('multiplication_feedback_text'),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ],
+            SwitchListTile(
+              key: const Key('ten_mode_switch_tile'),
+              title: const Text('Προπαίδεια του 10'),
+              subtitle: const Text('Για εξάσκηση μόνο στο 10×1 έως 10×10'),
+              value: _tenTimesMode,
+              onChanged: _setTenTimesMode,
+            ),
+            const SizedBox(height: 18),
+            Text(
+              '${current.$1} × ${current.$2} = ?',
+              key: const Key('multiplication_question_text'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.displaySmall,
+            ),
+            const SizedBox(height: 18),
+            TextField(
+              key: const Key('multiplication_answer_field'),
+              controller: _answerController,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+                labelText: 'Η απάντησή μου',
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              key: const Key('multiplication_check_button'),
+              onPressed: _checkAnswer,
+              icon: const Icon(Icons.check_circle_outline),
+              label: const Text('Έλεγχος'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              key: const Key('multiplication_next_button'),
+              onPressed: _nextQuestion,
+              icon: const Icon(Icons.skip_next),
+              label: const Text('Επόμενη πράξη'),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _feedback,
+              key: const Key('multiplication_feedback_text'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -278,21 +319,22 @@ class _AgeFourPracticeTabState extends State<AgeFourPracticeTab> {
   ];
 
   int _questionIndex = 0;
-  String _feedback = 'Μέτρα τα αστεράκια και απάντησε.';
+  String _feedback = 'Μέτρα τα αστεράκια και απάντησε. ⭐';
 
   void _checkChoice(int selected) {
     final IntPair current = _ageFourQuestions[_questionIndex];
     final int correct = current.$1 + current.$2;
 
     setState(() {
-      _feedback = selected == correct ? 'Μπράβο! Σωστό!' : 'Πολύ κοντά! Δοκίμασε ξανά.';
+      _feedback =
+          selected == correct ? 'Μπράβο! Σωστό! 🥳' : 'Πολύ κοντά! Δοκίμασε ξανά.';
     });
   }
 
   void _next() {
     setState(() {
       _questionIndex = (_questionIndex + 1) % _ageFourQuestions.length;
-      _feedback = 'Νέα ερώτηση!';
+      _feedback = 'Νέα ερώτηση! 🌈';
     });
   }
 
@@ -300,53 +342,57 @@ class _AgeFourPracticeTabState extends State<AgeFourPracticeTab> {
   Widget build(BuildContext context) {
     final IntPair current = _ageFourQuestions[_questionIndex];
     final int sum = current.$1 + current.$2;
-    final List<int> choices = <int>[sum - 1, sum, sum + 1]..removeWhere((int value) => value < 0);
+    final List<int> choices = <int>[sum - 1, sum, sum + 1]
+      ..removeWhere((int value) => value < 0);
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            'Πόσο κάνει; ${current.$1} + ${current.$2}',
-            key: const Key('age4_question_text'),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 14),
-          Text(
-            '${'⭐' * current.$1} + ${'⭐' * current.$2}',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 10,
-            runSpacing: 10,
-            children: choices
-                .map(
-                  (int choice) => ElevatedButton(
-                    key: Key('age4_choice_$choice'),
-                    onPressed: () => _checkChoice(choice),
-                    child: Text('$choice'),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton(
-            key: const Key('age4_next_button'),
-            onPressed: _next,
-            child: const Text('Επόμενη ερώτηση'),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            _feedback,
-            key: const Key('age4_feedback_text'),
-            textAlign: TextAlign.center,
-          ),
-        ],
+    return Container(
+      color: const Color(0xFFE1F5FE),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              'Πόσο κάνει; ${current.$1} + ${current.$2}',
+              key: const Key('age4_question_text'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 14),
+            Text(
+              '${'⭐' * current.$1} + ${'⭐' * current.$2}',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 20),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 10,
+              runSpacing: 10,
+              children: choices
+                  .map(
+                    (int choice) => ElevatedButton(
+                      key: Key('age4_choice_$choice'),
+                      onPressed: () => _checkChoice(choice),
+                      child: Text('$choice'),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              key: const Key('age4_next_button'),
+              onPressed: _next,
+              child: const Text('Επόμενη ερώτηση'),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _feedback,
+              key: const Key('age4_feedback_text'),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

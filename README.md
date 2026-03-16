@@ -1,6 +1,6 @@
 # create-simple-flutter-app-for-education
 
-A simple educational Flutter starter app focused on practicing multiplication (προπαίδεια).
+A colorful educational Flutter app focused on the 10-times table (προπαίδεια του 10) and beginner math for kids.
 
 ## Included
 
@@ -12,9 +12,11 @@ A simple educational Flutter starter app focused on practicing multiplication (�
 
 ## Τι κάνει η εφαρμογή
 
-- Έχει 2 tabs: **Πολλαπλασιασμός** και **Ηλικία 4+**.
-- Στο tab πολλαπλασιασμού υπάρχει επίπεδο δυσκολίας (**Εύκολο 1-5 / Μεσαίο 4-12 / Δύσκολο 7-20**).
+- Έχει 2 tabs: **Προπαίδεια** και **Ηλικία 4+**.
+- Στην προεπιλογή κάνει εξάσκηση στην **προπαίδεια του 10** (10×1 έως 10×10).
+- Μπορείς να απενεργοποιήσεις το mode του 10 και να επιλέξεις επίπεδο δυσκολίας (**Εύκολο 1-5 / Μεσαίο 4-12 / Δύσκολο 7-20**).
 - Οι πράξεις ανακατεύονται και δεν επαναλαμβάνονται αμέσως η μία μετά την άλλη.
+- Το UI είναι πιο παιδικό (χρώματα, emojis, ενισχυτικό feedback).
 - Στο tab **Ηλικία 4+** υπάρχουν απλές προσθέσεις με αστεράκια και έτοιμες επιλογές απάντησης.
 
 ## Πώς το τρέχω τώρα; (γρήγορα)

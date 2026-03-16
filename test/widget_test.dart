@@ -3,25 +3,44 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:create_simple_flutter_app_for_education/main.dart';
 
+int _solveFromQuestionText(String question) {
+  final RegExpMatch match = RegExp(r'(\d+) × (\d+)').firstMatch(question)!;
+  return int.parse(match.group(1)!) * int.parse(match.group(2)!);
+}
+
 void main() {
+  testWidgets('default mode is table of 10', (WidgetTester tester) async {
+    await tester.pumpWidget(const EducationApp());
+
+    expect(find.byKey(const Key('ten_mode_switch_tile')), findsOneWidget);
+
+    final String question =
+        (tester.widget<Text>(find.byKey(const Key('multiplication_question_text')))).data!;
+    expect(question.startsWith('10 × '), isTrue);
+  });
+
   testWidgets('multiplication tab checks correct answer and increments score once', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const EducationApp());
 
-    expect(find.text('Πολλαπλασιασμός'), findsOneWidget);
-    expect(find.byKey(const Key('score_text')), findsOneWidget);
+    final String question =
+        (tester.widget<Text>(find.byKey(const Key('multiplication_question_text')))).data!;
+    final int answer = _solveFromQuestionText(question);
 
-    await tester.enterText(find.byKey(const Key('multiplication_answer_field')), '6');
+    await tester.enterText(
+      find.byKey(const Key('multiplication_answer_field')),
+      '$answer',
+    );
     await tester.tap(find.byKey(const Key('multiplication_check_button')));
     await tester.pump();
 
-    expect(find.textContaining('Σωστά!'), findsOneWidget);
-    expect(find.text('Πόντοι: 1'), findsOneWidget);
+    expect(find.textContaining('Μπράβο!'), findsOneWidget);
+    expect(find.text('🏆 1'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('multiplication_check_button')));
     await tester.pump();
-    expect(find.text('Πόντοι: 1'), findsOneWidget);
+    expect(find.text('🏆 1'), findsOneWidget);
   });
 
   testWidgets('next question does not immediately repeat same multiplication', (
@@ -41,11 +60,13 @@ void main() {
     expect(secondQuestion, isNot(firstQuestion));
   });
 
-
   testWidgets('hard difficulty generates larger multiplication numbers', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const EducationApp());
+
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const Key('difficulty_dropdown')));
     await tester.pumpAndSettle();
@@ -63,7 +84,9 @@ void main() {
     expect(right, greaterThanOrEqualTo(7));
   });
 
-  testWidgets('age 4 tab shows addition exercise and feedback', (WidgetTester tester) async {
+  testWidgets('age 4 tab shows addition exercise and feedback', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const EducationApp());
 
     await tester.tap(find.text('Ηλικία 4+'));
