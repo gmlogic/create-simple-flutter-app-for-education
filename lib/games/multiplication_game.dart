@@ -42,43 +42,7 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
   // Μετρητής συνεχόμενων σωστών απαντήσεων για bonus εμφάνιση.
   int _correctStreak = 0;
 
-  // Επιλογές ηρώων (Marvel) για bonus κάρτα.
-  static const List<HeroOption> _heroOptions = [
-    HeroOption(
-      id: 'spidey',
-      name: 'Spidey',
-      assetPath: 'assets/heroes/spidey.png',
-      startColor: Color(0xFFE53935),
-      endColor: Color(0xFF3949AB),
-    ),
-    HeroOption(
-      id: 'ironman',
-      name: 'Iron Man',
-      assetPath: 'assets/heroes/ironman.png',
-      startColor: Color(0xFFB71C1C),
-      endColor: Color(0xFFFFC107),
-    ),
-    HeroOption(
-      id: 'cap',
-      name: 'Cap',
-      assetPath: 'assets/heroes/cap.png',
-      startColor: Color(0xFF0D47A1),
-      endColor: Color(0xFFD32F2F),
-    ),
-    HeroOption(
-      id: 'spider_tails',
-      name: 'Spider Tails',
-      assetPath: 'assets/heroes/spider_tails.png',
-      startColor: Color(0xFFF57C00),
-      endColor: Color(0xFFE53935),
-    ),
-  ];
-  String _selectedHeroId = 'spidey';
-
-  HeroOption get _selectedHero => _heroOptions.firstWhere(
-        (hero) => hero.id == _selectedHeroId,
-        orElse: () => _heroOptions.first,
-      );
+  HeroOption _bonusHero = multiplicationHeroOptions.first;
 
   @override
   void initState() {
@@ -140,6 +104,10 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
 
       if (answer == _correctAnswer) {
         _correctStreak++;
+        if (_correctStreak >= 5) {
+          _bonusHero = multiplicationHeroOptions[
+              _random.nextInt(multiplicationHeroOptions.length)];
+        }
         _message = 'Μπράβο!';
         _messageColor = Colors.green.shade700;
       } else {
@@ -171,7 +139,8 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
       localeId: 'el_GR',
       onResult: (result) {
         // Κρατάμε μόνο ψηφία, για να πάρουμε αριθμητική απάντηση.
-        final spoken = result.recognizedWords.replaceAll(RegExp(r'[^0-9]'), '').trim();
+        final spoken =
+            result.recognizedWords.replaceAll(RegExp(r'[^0-9]'), '').trim();
         if (spoken.isNotEmpty) {
           _answerController.text = spoken;
         }
@@ -197,16 +166,10 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
+              constraints:
+                  BoxConstraints(minHeight: constraints.maxHeight - 32),
               child: Column(
                 children: [
-                  HeroSelector(
-                    title: 'Επίλεξε ήρωα bonus',
-                    options: _heroOptions,
-                    selectedId: _selectedHeroId,
-                    onSelected: (heroId) => setState(() => _selectedHeroId = heroId),
-                  ),
-                  const SizedBox(height: 10),
                   DifficultySelector(
                     selected: _difficulty,
                     onChanged: (value) {
@@ -227,9 +190,11 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
                   const SizedBox(height: 20),
                   Card(
                     elevation: 4,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 24, horizontal: 16),
                       child: Text(
                         '$_a × $_b = ?',
                         style: TextStyle(
@@ -245,7 +210,9 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
                     controller: _answerController,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: isTablet ? 30 : 24, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                        fontSize: isTablet ? 30 : 24,
+                        fontWeight: FontWeight.w700),
                     decoration: InputDecoration(
                       hintText: 'Γράψε την απάντηση',
                       filled: true,
@@ -270,7 +237,8 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
                             ),
                             onPressed: _checkTypedAnswer,
                             icon: const Icon(Icons.check_circle),
-                            label: const Text('Έλεγχος', style: TextStyle(fontSize: 18)),
+                            label: const Text('Έλεγχος',
+                                style: TextStyle(fontSize: 18)),
                           ),
                         ),
                       ),
@@ -280,11 +248,13 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
                         width: buttonHeight,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _isListening ? Colors.red : Colors.purple,
+                            backgroundColor:
+                                _isListening ? Colors.red : Colors.purple,
                             foregroundColor: Colors.white,
                           ),
                           onPressed: _toggleVoiceInput,
-                          child: Icon(_isListening ? Icons.mic_off : Icons.mic, size: 24),
+                          child: Icon(_isListening ? Icons.mic_off : Icons.mic,
+                              size: 24),
                         ),
                       ),
                     ],
@@ -300,13 +270,14 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: HeroAvatar(hero: _selectedHero, size: 54),
+                              child: HeroAvatar(hero: _bonusHero, size: 54),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                'Bonus! 5 σωστές συνεχόμενες 🎉\nΕμφανίστηκε ο ${_selectedHero.name}!',
-                                style: const TextStyle(fontWeight: FontWeight.w700),
+                                'Bonus! 5 σωστές συνεχόμενες 🎉\nΕμφανίστηκε ο ${_bonusHero.name}!',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700),
                               ),
                             ),
                           ],
@@ -333,7 +304,8 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
                       ),
                       onPressed: _generateQuestion,
                       icon: const Icon(Icons.refresh),
-                      label: const Text('Επόμενη ερώτηση', style: TextStyle(fontSize: 18)),
+                      label: const Text('Επόμενη ερώτηση',
+                          style: TextStyle(fontSize: 18)),
                     ),
                   ),
                 ],

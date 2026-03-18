@@ -17,6 +17,68 @@ class HeroOption {
   final Color endColor;
 }
 
+const List<HeroOption> multiplicationHeroOptions = [
+  HeroOption(
+    id: 'spidey',
+    name: 'Spidey',
+    assetPath: 'assets/heroes/spidey.png',
+    startColor: Color(0xFFE53935),
+    endColor: Color(0xFF3949AB),
+  ),
+  HeroOption(
+    id: 'ironman',
+    name: 'Iron Man',
+    assetPath: 'assets/heroes/ironman.png',
+    startColor: Color(0xFFB71C1C),
+    endColor: Color(0xFFFFC107),
+  ),
+  HeroOption(
+    id: 'cap',
+    name: 'Cap',
+    assetPath: 'assets/heroes/cap.png',
+    startColor: Color(0xFF0D47A1),
+    endColor: Color(0xFFD32F2F),
+  ),
+  HeroOption(
+    id: 'spider_tails',
+    name: 'Spider Tails',
+    assetPath: 'assets/heroes/spider_tails.png',
+    startColor: Color(0xFFF57C00),
+    endColor: Color(0xFFE53935),
+  ),
+];
+
+const List<HeroOption> arithmeticHeroOptions = [
+  HeroOption(
+    id: 'tails',
+    name: 'Tails',
+    assetPath: 'assets/heroes/tails.png',
+    startColor: Color(0xFFFFB300),
+    endColor: Color(0xFFF57C00),
+  ),
+  HeroOption(
+    id: 'spidey',
+    name: 'Spidey',
+    assetPath: 'assets/heroes/spidey.png',
+    startColor: Color(0xFFE53935),
+    endColor: Color(0xFF3949AB),
+  ),
+  HeroOption(
+    id: 'ironman',
+    name: 'Iron Man',
+    assetPath: 'assets/heroes/ironman.png',
+    startColor: Color(0xFFB71C1C),
+    endColor: Color(0xFFFFC107),
+  ),
+  HeroOption(
+    id: 'spider_tails',
+    name: 'Spider Tails',
+    assetPath: 'assets/heroes/spider_tails.png',
+    startColor: Color(0xFFF57C00),
+    endColor: Color(0xFFE53935),
+  ),
+];
+
 /// Μικρό "avatar" ήρωα που δεν εξαρτάται από internet εικόνες.
 class HeroAvatar extends StatelessWidget {
   const HeroAvatar({
@@ -109,12 +171,15 @@ class HeroSelector extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 160),
                     width: 94,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     decoration: BoxDecoration(
                       color: selected ? const Color(0xFFE9EEFF) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: selected ? const Color(0xFF3454D1) : Colors.grey.shade300,
+                        color: selected
+                            ? const Color(0xFF3454D1)
+                            : Colors.grey.shade300,
                         width: selected ? 2 : 1,
                       ),
                     ),
