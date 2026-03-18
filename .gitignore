@@ -41,3 +41,14 @@ app.*.map.json
 
 # Local hero images added manually (do not commit)
 assets/heroes/*.png
+
+# Flutter
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
+.metadata
+pubspec.lock
