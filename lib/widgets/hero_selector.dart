@@ -1,85 +1,9 @@
+// UPDATED
 import 'package:flutter/material.dart';
 
-/// Επιλογή ήρωα για bonus εμφάνιση.
-class HeroOption {
-  const HeroOption({
-    required this.id,
-    required this.name,
-    required this.assetPath,
-    required this.startColor,
-    required this.endColor,
-  });
+import '../core/app_models.dart';
 
-  final String id;
-  final String name;
-  final String assetPath;
-  final Color startColor;
-  final Color endColor;
-}
-
-const List<HeroOption> multiplicationHeroOptions = [
-  HeroOption(
-    id: 'spidey',
-    name: 'Spidey',
-    assetPath: 'assets/heroes/spidey.png',
-    startColor: Color(0xFFE53935),
-    endColor: Color(0xFF3949AB),
-  ),
-  HeroOption(
-    id: 'ironman',
-    name: 'Iron Man',
-    assetPath: 'assets/heroes/ironman.png',
-    startColor: Color(0xFFB71C1C),
-    endColor: Color(0xFFFFC107),
-  ),
-  HeroOption(
-    id: 'cap',
-    name: 'Cap',
-    assetPath: 'assets/heroes/cap.png',
-    startColor: Color(0xFF0D47A1),
-    endColor: Color(0xFFD32F2F),
-  ),
-  HeroOption(
-    id: 'spider_tails',
-    name: 'Spider Tails',
-    assetPath: 'assets/heroes/spider_tails.png',
-    startColor: Color(0xFFF57C00),
-    endColor: Color(0xFFE53935),
-  ),
-];
-
-const List<HeroOption> arithmeticHeroOptions = [
-  HeroOption(
-    id: 'tails',
-    name: 'Tails',
-    assetPath: 'assets/heroes/tails.png',
-    startColor: Color(0xFFFFB300),
-    endColor: Color(0xFFF57C00),
-  ),
-  HeroOption(
-    id: 'spidey',
-    name: 'Spidey',
-    assetPath: 'assets/heroes/spidey.png',
-    startColor: Color(0xFFE53935),
-    endColor: Color(0xFF3949AB),
-  ),
-  HeroOption(
-    id: 'ironman',
-    name: 'Iron Man',
-    assetPath: 'assets/heroes/ironman.png',
-    startColor: Color(0xFFB71C1C),
-    endColor: Color(0xFFFFC107),
-  ),
-  HeroOption(
-    id: 'spider_tails',
-    name: 'Spider Tails',
-    assetPath: 'assets/heroes/spider_tails.png',
-    startColor: Color(0xFFF57C00),
-    endColor: Color(0xFFE53935),
-  ),
-];
-
-/// Μικρό "avatar" ήρωα που δεν εξαρτάται από internet εικόνες.
+// UPDATED
 class HeroAvatar extends StatelessWidget {
   const HeroAvatar({
     required this.hero,
@@ -87,7 +11,7 @@ class HeroAvatar extends StatelessWidget {
     super.key,
   });
 
-  final HeroOption hero;
+  final AppHero hero;
   final double size;
 
   @override
@@ -127,20 +51,20 @@ class HeroAvatar extends StatelessWidget {
   }
 }
 
-/// Reusable selector με μικρές κάρτες ήρωα.
+// UPDATED
 class HeroSelector extends StatelessWidget {
   const HeroSelector({
     required this.title,
     required this.options,
-    required this.selectedId,
-    required this.onSelected,
+    required this.selectedIds,
+    required this.onToggle,
     super.key,
   });
 
   final String title;
-  final List<HeroOption> options;
-  final String selectedId;
-  final ValueChanged<String> onSelected;
+  final List<AppHero> options;
+  final Set<String> selectedIds;
+  final ValueChanged<String> onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -164,13 +88,13 @@ class HeroSelector extends StatelessWidget {
               spacing: 10,
               runSpacing: 10,
               children: options.map((hero) {
-                final selected = hero.id == selectedId;
+                final selected = selectedIds.contains(hero.id);
                 return InkWell(
                   borderRadius: BorderRadius.circular(12),
-                  onTap: () => onSelected(hero.id),
+                  onTap: () => onToggle(hero.id),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 160),
-                    width: 94,
+                    width: 104,
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     decoration: BoxDecoration(
                       color: selected ? const Color(0xFFE9EEFF) : Colors.white,
@@ -193,6 +117,12 @@ class HeroSelector extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF2C3140),
                           ),
+                        ),
+                        const SizedBox(height: 6),
+                        Icon(
+                          selected ? Icons.check_circle : Icons.radio_button_unchecked,
+                          color: selected ? const Color(0xFF3454D1) : Colors.grey,
+                          size: 18,
                         ),
                       ],
                     ),

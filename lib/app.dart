@@ -1,41 +1,66 @@
+// UPDATED
 import 'package:flutter/material.dart';
 
+import 'core/app_controller.dart';
 import 'home_page.dart';
 
 /// Το κεντρικό widget της εφαρμογής.
-///
-/// Εδώ ορίζουμε global ρυθμίσεις όπως τίτλο, theme και αρχική σελίδα.
-class KidsEducationApp extends StatelessWidget {
+class KidsEducationApp extends StatefulWidget {
   const KidsEducationApp({super.key});
 
   @override
+  State<KidsEducationApp> createState() => _KidsEducationAppState();
+}
+
+// UPDATED
+class _KidsEducationAppState extends State<KidsEducationApp> {
+  late final Future<AppController> _controllerFuture = AppController.create();
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // Κρύβει το debug banner (πάνω δεξιά) για πιο "καθαρό" UI.
-      debugShowCheckedModeBanner: false,
-      title: 'Μαθαίνω Παίζοντας',
-      theme: ThemeData(
-        // Seed color: από αυτό το χρώμα το Material 3 παράγει χρωματική παλέτα.
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF3454D1)),
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF7F9FC),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            foregroundColor: Colors.white,
+    return FutureBuilder<AppController>(
+      future: _controllerFuture,
+      builder: (context, snapshot) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Μαθαίνω Παίζοντας',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF3454D1)),
+            useMaterial3: true,
+            scaffoldBackgroundColor: const Color(0xFFF7F9FC),
+            cardTheme: CardThemeData(
+              elevation: 1.5,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              color: Colors.white,
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                foregroundColor: Colors.white,
+              ),
+            ),
+            filledButtonTheme: FilledButtonThemeData(
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                foregroundColor: Colors.white,
+              ),
+            ),
           ),
-        ),
-        filledButtonTheme: FilledButtonThemeData(
-          style: FilledButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            foregroundColor: Colors.white,
-          ),
-        ),
-      ),
-      // Η αρχική οθόνη της εφαρμογής (με τα 2 tabs).
-      home: const HomePage(),
+          home: snapshot.hasData
+              ? HomePage(controller: snapshot.data!)
+              : const Scaffold(body: Center(child: CircularProgressIndicator())),
+        );
+      },
     );
   }
 }
