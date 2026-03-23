@@ -239,15 +239,32 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  TextField(
-                    controller: _answerController,
-                    focusNode: _answerFocusNode,
-                    autofocus: true,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: isTablet ? 30 : 24, fontWeight: FontWeight.w700),
-                    decoration: const InputDecoration(hintText: 'Γράψε την απάντηση'),
-                    onSubmitted: (_) => _checkTypedAnswer(),
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _answerController,
+                    builder: (context, value, child) {
+                      return TextField(
+                        controller: _answerController,
+                        focusNode: _answerFocusNode,
+                        autofocus: true,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: isTablet ? 30 : 24, fontWeight: FontWeight.w700),
+                        decoration: InputDecoration(
+                          hintText: '\u0393\u03c1\u03ac\u03c8\u03b5 \u03c4\u03b7\u03bd \u03b1\u03c0\u03ac\u03bd\u03c4\u03b7\u03c3\u03b7',
+                          suffixIcon: value.text.isEmpty
+                              ? null
+                              : IconButton(
+                                  tooltip: 'Clear',
+                                  onPressed: () {
+                                    _answerController.clear();
+                                    _focusAnswerField();
+                                  },
+                                  icon: const Icon(Icons.close),
+                                ),
+                        ),
+                        onSubmitted: (_) => _checkTypedAnswer(),
+                      );
+                    },
                   ),
                   const SizedBox(height: 12),
                   Row(
