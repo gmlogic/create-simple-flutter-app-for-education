@@ -1,6 +1,7 @@
 // UPDATED
 import 'package:flutter/material.dart';
 
+import 'build_info.dart';
 import 'core/app_controller.dart';
 import 'games/arithmetic_game.dart';
 import 'games/multiplication_game.dart';
@@ -18,8 +19,10 @@ class HomePage extends StatelessWidget {
       applicationName: 'Μαθαίνω Παίζοντας',
       applicationVersion: '1.0.0',
       applicationLegalese: 'Educational Flutter app for young children.',
-      children: const [
-        Text('Παιδικό design με πιο επαγγελματικό ύφος και προσωποποιημένες ρυθμίσεις.'),
+      children: [
+        const Text('Παιδικό design με πιο επαγγελματικό ύφος και προσωποποιημένες ρυθμίσεις.'),
+        const SizedBox(height: 4),
+        Text('Build datetime: ${DateTime.parse(BuildInfo.buildDate).toLocal()}'),
       ],
     );
   }
@@ -43,7 +46,10 @@ class HomePage extends StatelessWidget {
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF3F51B5), Color(0xFF5C6BC0)],
+                          colors: [
+                            Color(0xFF3F51B5),
+                            Color(0xFF5C6BC0)
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(24),
                       ),
@@ -86,11 +92,11 @@ class HomePage extends StatelessWidget {
                         },
                       ),
                     ),
-                    Card(
+                    const Card(
                       child: ListTile(
-                        leading: const Icon(Icons.mic_none_outlined),
-                        title: const Text('Auto voice'),
-                        subtitle: const Text('Ξεκινά αυτόματα σε κάθε νέα ερώτηση χωρίς mic button.'),
+                        leading: Icon(Icons.mic_none_outlined),
+                        title: Text('Auto voice'),
+                        subtitle: Text('Ξεκινά αυτόματα σε κάθε νέα ερώτηση χωρίς mic button.'),
                       ),
                     ),
                     Card(
@@ -126,7 +132,10 @@ class HomePage extends StatelessWidget {
               flexibleSpace: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF3F51B5), Color(0xFF5C6BC0)],
+                    colors: [
+                      Color(0xFF3F51B5),
+                      Color(0xFF5C6BC0)
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -146,7 +155,10 @@ class HomePage extends StatelessWidget {
             body: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFFF8FAFF), Color(0xFFF1F4FB)],
+                  colors: [
+                    Color(0xFFF8FAFF),
+                    Color(0xFFF1F4FB)
+                  ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

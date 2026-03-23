@@ -23,12 +23,16 @@ class HeroAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(size * 0.22),
         gradient: LinearGradient(
-          colors: [hero.startColor, hero.endColor],
+          colors: [
+            hero.startColor,
+            hero.endColor
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.12),
             blurRadius: 6,
             offset: const Offset(0, 2),
@@ -43,6 +47,7 @@ class HeroAvatar extends StatelessWidget {
           errorBuilder: (_, __, ___) => Icon(
             Icons.image_outlined,
             size: size * 0.48,
+            // ignore: deprecated_member_use
             color: Colors.white.withOpacity(0.95),
           ),
         ),

@@ -1,32 +1,44 @@
 $ssh = "C:\Windows\System32\OpenSSH\ssh.exe"
 $scp = "C:\Windows\System32\OpenSSH\scp.exe"
 
-$server = "gmlogick@100.66.6.42"
-$port = 2332
+$server = "gmlogick-panel"
+
 $remotePath = "/var/www/clients/client5/web25/web"
 $backupPath = "/var/www/clients/client5/web25/backup"
 
+# VERSION
 $version = Get-Date -Format "yyyyMMdd_HHmmss"
 
-Write-Host "Version: $version"
+Write-Host "Version: $version" -ForegroundColor Cyan
 
-Write-Host "Building..."
-flutter build web
+# BUILD
+Write-Host "Building Flutter Web..." -ForegroundColor Yellow
+dart run tool/generate_build_info.dart
+flutter build web --release #--no-tree-shake-icons --pwa-strategy=none
 
 if ($LASTEXITCODE -ne 0) {
-Write-Host "Build failed!"
-exit 1
+    Write-Host "Build failed!" -ForegroundColor Red
+    exit 1
 }
 
-Write-Host "Creating backup..."
-& $ssh -p $port $server "mkdir -p $backupPath/$version && cp -r $remotePath/* $backupPath/$version/"
+# BACKUP
+Write-Host "Creating backup..." -ForegroundColor Yellow
+& $ssh $server "mkdir -p $backupPath/$version && cp -r $remotePath/* $backupPath/$version/ 2>/dev/null"
 
-Write-Host "Cleaning..."
-& $ssh -p $port $server "rm -rf $remotePath/*"
+# CLEAN - Διαγραφή όλων ΕΚΤΟΣ από stats και .htaccess
+Write-Host "Cleaning old files (keeping stats & .htaccess)..." -ForegroundColor Yellow
+& $ssh $server "find $remotePath -mindepth 1 -maxdepth 1 ! -name 'stats' ! -name '.htaccess' -exec rm -rf {} +"
 
-Write-Host "Uploading..."
-& $scp -P $port -r build/web/* "${server}:$remotePath/"
+# UPLOAD
+Write-Host "Uploading files..." -ForegroundColor Yellow
+& $scp -r build/web/* "${server}:$remotePath/"
 
-Write-Host "Deploy OK!"
-Write-Host "https://kids.gmhost.gr/"
-Write-Host "Version: $version"
+# FIX PERMISSIONS (Προστασία από Error 500 και "κουτάκια" στα εικονίδια)
+Write-Host "Fixing permissions (skipping stats folder)..." -ForegroundColor Yellow
+& $ssh $server "find $remotePath -path '*/stats' -prune -o -type d -exec chmod 755 {} + && find $remotePath -path '*/stats' -prune -o -type f -exec chmod 644 {} +"
+
+# DONE
+Write-Host "----------------------------" -ForegroundColor Green
+Write-Host "Deploy OK!" -ForegroundColor Green
+Write-Host "URL: https://kids.gmhost.gr" -ForegroundColor Green
+Write-Host "Version: $version" -ForegroundColor Green
