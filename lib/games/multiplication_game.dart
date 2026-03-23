@@ -8,6 +8,7 @@ import '../core/app_controller.dart';
 import '../core/app_models.dart';
 import '../widgets/difficulty_selector.dart';
 import '../widgets/hero_selector.dart';
+import '../widgets/voice_wave_indicator.dart';
 
 /// Επίπεδα δυσκολίας για την προπαίδεια.
 enum Difficulty { easy, medium, hard }
@@ -182,7 +183,14 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
             _StatusChip(label: 'Λάθη για hero: $_tries / $_maxTriesForHero', icon: Icons.auto_awesome),
             _StatusChip(label: 'Σωστές: ${stats.correctAnswers}', icon: Icons.check_circle),
             _StatusChip(label: 'Λάθος: ${stats.wrongAnswers}', icon: Icons.close),
-            _StatusChip(label: _isListening ? 'Ακούω…' : 'Voice standby', icon: Icons.record_voice_over),
+            _StatusChip(
+              label: _isListening ? 'Ακούω…' : 'Voice standby',
+              icon: Icons.record_voice_over,
+              trailing: VoiceWaveIndicator(
+                active: _isListening,
+                color: const Color(0xFF3454D1),
+              ),
+            ),
           ],
         ),
       ),
@@ -340,10 +348,15 @@ class _MultiplicationGameState extends State<MultiplicationGame> {
 
 // NEW
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label, required this.icon});
+  const _StatusChip({
+    required this.label,
+    required this.icon,
+    this.trailing,
+  });
 
   final String label;
   final IconData icon;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -361,6 +374,10 @@ class _StatusChip extends StatelessWidget {
             Icon(icon, size: 16, color: const Color(0xFF3454D1)),
             const SizedBox(width: 6),
             Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+            if (trailing != null) ...[
+              const SizedBox(width: 8),
+              trailing!,
+            ],
           ],
         ),
       ),

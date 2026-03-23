@@ -7,6 +7,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../core/app_controller.dart';
 import '../core/app_models.dart';
 import '../widgets/hero_selector.dart';
+import '../widgets/voice_wave_indicator.dart';
 
 /// Τύπος πράξης για το tab 4 ετών.
 enum OperationMode { addition, subtraction, mixed }
@@ -199,7 +200,14 @@ class _ArithmeticGameState extends State<ArithmeticGame> {
             _StatusChip(label: 'Λάθη για hero: $_tries / $_maxTriesForHero', icon: Icons.auto_awesome),
             _StatusChip(label: 'Σωστές: ${stats.correctAnswers}', icon: Icons.check_circle),
             _StatusChip(label: 'Λάθος: ${stats.wrongAnswers}', icon: Icons.close),
-            _StatusChip(label: _isListening ? 'Ακούω…' : 'Voice standby', icon: Icons.hearing),
+            _StatusChip(
+              label: _isListening ? 'Ακούω…' : 'Voice standby',
+              icon: Icons.hearing,
+              trailing: VoiceWaveIndicator(
+                active: _isListening,
+                color: const Color(0xFFB26A00),
+              ),
+            ),
           ],
         ),
       ),
@@ -396,10 +404,15 @@ class _ArithmeticGameState extends State<ArithmeticGame> {
 
 // NEW
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label, required this.icon});
+  const _StatusChip({
+    required this.label,
+    required this.icon,
+    this.trailing,
+  });
 
   final String label;
   final IconData icon;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -417,6 +430,10 @@ class _StatusChip extends StatelessWidget {
             Icon(icon, size: 16, color: const Color(0xFFB26A00)),
             const SizedBox(width: 6),
             Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+            if (trailing != null) ...[
+              const SizedBox(width: 8),
+              trailing!,
+            ],
           ],
         ),
       ),
